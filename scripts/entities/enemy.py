@@ -95,13 +95,16 @@ class Enemy(Entity):
 
 
 class EnemyManager:
-    def __init__(self, tile_size):
+    def __init__(self, tile_size, player):
         self.tile_size = tile_size
         self.enemies = []
         self.damages = [1]
         self.healths = [3]
         self.dash_speed = [6]
         self.pursued = False
+        
+        self.player = player
+        self.NO_ENEMY_SPAWN_BUFFER = 5 #distance from player where enemies will not spawn
 
         self.spawn_cooldown = 180
         self.spawn_cooldown_timer = 180
@@ -111,9 +114,21 @@ class EnemyManager:
         if self.spawn_cooldown_timer < 0:
             return True
         return
+    
+    def get_no_spawn_zone(self):
+        """Returns the zone around the player where enemy cannot spawn. position is in tile coordinates"""
+        player_tile_pos_x = int(self.player.x // self.tile_size)
+        player_tile_pos_y = int(self.player.y // self.tile_size)
+        no_spawn_zone = []
+        
+        for x in range(player_tile_pos_x - self.NO_ENEMY_SPAWN_BUFFER, player_tile_pos_x + self.NO_ENEMY_SPAWN_BUFFER + 1):
+            for y in range(player_tile_pos_y - self.NO_ENEMY_SPAWN_BUFFER, player_tile_pos_y + self.NO_ENEMY_SPAWN_BUFFER + 1):
+                no_spawn_zone.append((x, y))
+        return no_spawn_zone
 
     def spawn(self, pos):
-        self.enemies.append(Enemy(self.tile_size, pos, random.choice(self.damages), random.choice(self.healths), random.choice(self.dash_speed)))
+        if pos not in self.get_no_spawn_zone():
+            self.enemies.append(Enemy(self.tile_size, pos, random.choice(self.damages), random.choice(self.healths), random.choice(self.dash_speed)))
     
     def draw(self, draw_surf, camera_offset):
         for enemy in self.enemies:

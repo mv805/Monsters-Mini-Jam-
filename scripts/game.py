@@ -52,7 +52,7 @@ class Game:
         self.lost = False
         self.upgraded = False
         self.wave = 1
-        self.enemy_manager = EnemyManager(self.tile_size)
+        self.enemy_manager = EnemyManager(self.tile_size, self.player)
         self.enemy_spawn_rate = 10
         self.spawn_enemies(self.enemy_spawn_rate)
 
@@ -92,7 +92,7 @@ class Game:
         self.lost = False
         self.upgraded = False
         self.wave = 1
-        self.enemy_manager = EnemyManager(self.tile_size)
+        self.enemy_manager = EnemyManager(self.tile_size, self.player)
         self.enemy_spawn_rate = 10
         self.spawn_enemies(self.enemy_spawn_rate)
 
